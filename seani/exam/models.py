@@ -64,6 +64,23 @@ class Exam(models.Model):
             for question in module.question_set.all():
                 Breakdown.objects.create(exam=self, question=question, correct=question.correct)
 
+    def compute_score_by_module(self, module_id):
+        score = 0.0
+        for question in self.breakdown_set.filter(question__module_id=module_id):
+            if question.correct == question.answer:
+                score += 10.0
+        exam_module = self.exammodule_set.get(module_id=module_id)
+        exam_module.score = score / self.questions.filter(module_id=module_id).count()
+        exam_module.active = False
+        exam_module.save()
+
+    def compute_score(self):
+        score = 0.0
+        for exam_module in self.exammodule_set.all():
+            score += exam_module.score
+        self.score = score / self.modules.count()
+        self.save()
+
     def __str__(self):
         return f"{ self.user.username } - { self.score }"
     
@@ -85,7 +102,10 @@ class ExamModule(models.Model):
         verbose_name_plural = 'Módulos de Examen'
 
 class Breakdown(models.Model):
-    exam = models.ForeignKey(Exam, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    answer = models.CharField(max_length=5, default = '-')
-    correct = models.CharField(max_length=5, default = '-')
+    exam = models.ForeignKey(Exam, on_delete=models.CASCADE, verbose_name = 'Examen')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE, verbose_name = 'Pregunta')
+    answer = models.CharField(max_length=5, default = '-', verbose_name = 'Respuesta')
+    correct = models.CharField(max_length=5, default = '-', verbose_name = 'Respuesta Correcta')
+
+    def __str__(self):
+        return f"{ self.question } { self.answer }"
