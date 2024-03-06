@@ -7,6 +7,6 @@ class CandidateForm(forms.Form):
     first_name = forms.CharField(max_length=100)
     last_name = forms.CharField(max_length=150)
     email = forms.EmailField()
-    password = forms.CharField(max_length=100)
+    password = forms.CharField(max_length=100, widget=forms.PasswordInput)
     stage = forms.ModelChoiceField(queryset=Stage.objects.all())
     career = forms.ModelChoiceField(queryset=Career.objects.all())

@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from django.contrib.auth.models import User
@@ -40,3 +40,34 @@ def create(request):
     else:
         form = CandidateForm()
     return render(request, 'exam/create.html', { "form": form })
+
+def home(request):
+    exam = request.user.exam
+    modules = exam.exammodule_set.all()
+    return render(request, 'exam/home.html', {'modules': modules} )
+
+def module(request, module_id, question_id = 1):
+    if request.method == 'GET':
+        try:
+            exam = request.user.exam
+            questions = exam.questions.filter(module_id = module_id) 
+            question = questions[question_id - 1]
+            breakdown = exam.breakdown_set.filter(question__module_id = module_id)
+            answer = breakdown[question_id - 1].answer
+            return render(request, 'exam/question.html', {
+                'question': question,
+                'module_id': module_id,
+                'question_id': question_id,
+                'answer': answer,
+                })
+        except IndexError:
+            return redirect('exam:home')
+    if request.method == 'POST':
+        exam = request.user.exam
+        question = exam.breakdown_set.filter(question__module_id = module_id)[question_id - 1]
+        answer = request.POST['answer']
+        if question.answer != answer:
+            question.answer = answer
+            question.save()
+        return redirect('exam:module', module_id, question_id + 1)
+

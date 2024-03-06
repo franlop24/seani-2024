@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Módulo{% endblock %}
+
+{% block content %}
+<!-- Pregunta -->
+{% if question.question_text %}
+    <h1>{{ question.question_text }}</h1>
+{% endif %}
+{% if question.question_image %}
+<img src="{{ question.question_image.url }}" width="400">    
+{% endif %}
+<form method="post" action="{% url 'exam:module' module_id question_id %}">
+    {% csrf_token %}
+    <p>Selecciona la respuesta Correcta:</p>
+    <input type="radio" id="ans0" name="answer" value="-" style="display: none;" checked>
+    <input type="radio" id="ans1" name="answer" value="A">
+    <label for="ans1">{{ question.answer1 }}</label><br>
+    <input type="radio" id="ans2" name="answer" value="B">
+    <label for="ans2">{{ question.answer2 }}</label><br>
+    {% if question.answer3 %}
+    <input type="radio" id="ans3" name="answer" value="C">
+    <label for="ans3">{{ question.answer3 }}</label><br>
+    {% endif %}
+    {% if question.answer4 %}
+    <input type="radio" id="ans4" name="answer" value="D">
+    <label for="ans4">{{ question.answer4 }}</label><br>
+    {% endif %}
+    <input type="submit" value="Siguiente">
+</form>
+{% endblock %}
