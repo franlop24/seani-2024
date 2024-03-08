@@ -2,12 +2,13 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
+
 from .models import Exam
 
 from .forms import CandidateForm
-from django.http import HttpResponseRedirect
 
-# Create your views here.
+@login_required
 def create(request):
     if request.method == 'POST':
         form = CandidateForm(request.POST)
@@ -41,15 +42,21 @@ def create(request):
     form = CandidateForm()
     return render(request, 'exam/create.html', { "form": form })
 
+@login_required
 def home(request):
     exam = request.user.exam
     modules = exam.exammodule_set.all()
     return render(request, 'exam/home.html', {'modules': modules} )
 
+@login_required
 def question(request, module_id, question_id = 1):
+    exam = request.user.exam
+
+    if exam.exammodule_set.get(module_id = module_id).active == False:
+        return redirect('exam:home')
     if request.method == 'GET':
         try:
-            exam = request.user.exam
+            # exam = request.user.exam
             questions = exam.breakdown_set.filter(question__module_id = module_id)
             question_breakdown = questions[question_id - 1]
             question = question_breakdown.question
@@ -62,8 +69,9 @@ def question(request, module_id, question_id = 1):
                 })
         except IndexError:
             return redirect('exam:home')
+        
     if request.method == 'POST':
-        exam = request.user.exam
+        # exam = request.user.exam
         questions = exam.breakdown_set.filter(question__module_id = module_id)
         question_breakdown = questions[question_id - 1]
         answer = request.POST['answer']
@@ -72,7 +80,7 @@ def question(request, module_id, question_id = 1):
             question_breakdown.save()
         return redirect('exam:question', module_id, question_id + 1)
 
-
+@login_required
 def save_module(request, module_id):
     if request.method == 'POST':
         exam = request.user.exam
@@ -80,6 +88,7 @@ def save_module(request, module_id):
         return redirect('exam:home')
     return redirect('exam:home')
 
+@login_required
 def save_exam(request):
     if request.method == 'POST':
         exam = request.user.exam
