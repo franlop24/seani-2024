@@ -71,7 +71,7 @@ class Exam(models.Model):
                 score += 10.0
         exam_module = self.exammodule_set.get(module_id=module_id)
         exam_module.score = score / self.questions.filter(module_id=module_id).count()
-        exam_module.active = False
+        # exam_module.active = False
         exam_module.save()
 
     def compute_score(self):

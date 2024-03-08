@@ -10,20 +10,22 @@
 {% if question.question_image %}
 <img src="{{ question.question_image.url }}" width="400">    
 {% endif %}
-<form method="post" action="{% url 'exam:module' module_id question_id %}">
+<form method="post" action="{% url 'exam:question' module_id question_id %}">
     {% csrf_token %}
     <p>Selecciona la respuesta Correcta:</p>
-    <input type="radio" id="ans0" name="answer" value="-" style="display: none;" checked>
-    <input type="radio" id="ans1" name="answer" value="A">
+    <input type="radio" id="ans0" 
+            name="answer" value="-" 
+            style="display: none;" {% if answer == '-' %}checked{% endif %}>
+    <input type="radio" id="ans1" name="answer" value="A" {% if answer == 'A' %}checked{% endif %}>
     <label for="ans1">{{ question.answer1 }}</label><br>
-    <input type="radio" id="ans2" name="answer" value="B">
+    <input type="radio" id="ans2" name="answer" value="B" {% if answer == 'B' %}checked{% endif %}>
     <label for="ans2">{{ question.answer2 }}</label><br>
     {% if question.answer3 %}
-    <input type="radio" id="ans3" name="answer" value="C">
+    <input type="radio" id="ans3" name="answer" value="C" {% if answer == 'C' %}checked{% endif %}>
     <label for="ans3">{{ question.answer3 }}</label><br>
     {% endif %}
     {% if question.answer4 %}
-    <input type="radio" id="ans4" name="answer" value="D">
+    <input type="radio" id="ans4" name="answer" value="D" {% if answer == 'D' %}checked{% endif %}>
     <label for="ans4">{{ question.answer4 }}</label><br>
     {% endif %}
     <input type="submit" value="Siguiente">

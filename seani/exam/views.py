@@ -16,12 +16,13 @@ def create(request):
             first_name = form.cleaned_data['first_name']
             last_name = form.cleaned_data['last_name']
             email = form.cleaned_data['email']
+            username = form.cleaned_data['username']
             password = form.cleaned_data['password']
             stage = form.cleaned_data['stage']
             career = form.cleaned_data['career']
             
             user = User.objects.create_user(
-                    username = email, 
+                    username = username, 
                     password = password, 
                     email = email)
             user.first_name = first_name
@@ -36,9 +37,8 @@ def create(request):
             <a href="/exam/create/">Registrar otro</a>
             """
             return HttpResponse(html)
-            # return HttpResponseRedirect("/thanks/")
-    else:
-        form = CandidateForm()
+    
+    form = CandidateForm()
     return render(request, 'exam/create.html', { "form": form })
 
 def home(request):
@@ -46,14 +46,14 @@ def home(request):
     modules = exam.exammodule_set.all()
     return render(request, 'exam/home.html', {'modules': modules} )
 
-def module(request, module_id, question_id = 1):
+def question(request, module_id, question_id = 1):
     if request.method == 'GET':
         try:
             exam = request.user.exam
-            questions = exam.questions.filter(module_id = module_id) 
-            question = questions[question_id - 1]
-            breakdown = exam.breakdown_set.filter(question__module_id = module_id)
-            answer = breakdown[question_id - 1].answer
+            questions = exam.breakdown_set.filter(question__module_id = module_id)
+            question_breakdown = questions[question_id - 1]
+            question = question_breakdown.question
+            answer = question_breakdown.answer
             return render(request, 'exam/question.html', {
                 'question': question,
                 'module_id': module_id,
@@ -64,10 +64,25 @@ def module(request, module_id, question_id = 1):
             return redirect('exam:home')
     if request.method == 'POST':
         exam = request.user.exam
-        question = exam.breakdown_set.filter(question__module_id = module_id)[question_id - 1]
+        questions = exam.breakdown_set.filter(question__module_id = module_id)
+        question_breakdown = questions[question_id - 1]
         answer = request.POST['answer']
-        if question.answer != answer:
-            question.answer = answer
-            question.save()
-        return redirect('exam:module', module_id, question_id + 1)
+        if question_breakdown.answer != answer:
+            question_breakdown.answer = answer
+            question_breakdown.save()
+        return redirect('exam:question', module_id, question_id + 1)
 
+
+def save_module(request, module_id):
+    if request.method == 'POST':
+        exam = request.user.exam
+        exam.compute_score_by_module(module_id)
+        return redirect('exam:home')
+    return redirect('exam:home')
+
+def save_exam(request):
+    if request.method == 'POST':
+        exam = request.user.exam
+        exam.compute_score()
+        return redirect('exam:home')
+    return redirect('exam:home')
