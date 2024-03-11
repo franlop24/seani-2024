@@ -54,6 +54,9 @@ class Exam(models.Model):
             verbose_name = "Fecha de actualización",
             auto_now=True)
     
+    def full_name(self):
+        return f"{ self.user.last_name } { self.user.first_name }"
+
     def set_modules(self):
         for module in Module.objects.all():
             self.modules.add(module)

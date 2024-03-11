@@ -4,11 +4,14 @@
 
 {% block content %}
 <!-- Pregunta -->
-{% if question.question_text %}
-    <h1>{{ question.question_text }}</h1>
-{% endif %}
+<hr>
+<a href="{% url 'exam:home' %}">Módulos</a>
+<hr>
 {% if question.question_image %}
-<img src="{{ question.question_image.url }}" width="400">    
+<img src="{{ question.question_image.url }}" width="800px">    
+{% endif %}
+{% if question.question_text %}
+    <h2>{{ question.question_text }}</h2>
 {% endif %}
 <form method="post" action="{% url 'exam:question' module_id question_id %}">
     {% csrf_token %}
@@ -28,6 +31,7 @@
     <input type="radio" id="ans4" name="answer" value="D" {% if answer == 'D' %}checked{% endif %}>
     <label for="ans4">{{ question.answer4 }}</label><br>
     {% endif %}
+    <br>
     <input type="submit" value="Siguiente">
 </form>
 {% endblock %}

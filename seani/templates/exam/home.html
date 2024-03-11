@@ -3,15 +3,15 @@
 {% block title %}Home Aspirante{% endblock %}
 
 {% block content %}
-<h1>Holaa desde Página de aspirante</h1>
-
-<ul>
+<h1>Seani 2024 - {{ user.exam.full_name }} - {{ user.exam.career }}</h1>
+<hr>
 {% for module in modules %}
-<li><a href="{% url 'exam:question' module.module.id %}">{{ module }}</a>
+<p><a href="{% url 'exam:question' module.module.id %}">{{ module }}</a>
+<br>
 <form action="{% url 'exam:save' module.module.id %}" method="post">{% csrf_token %}<input type="submit" value="Guardar Módulo"></form>
-</li><br>
+</p>
 {% endfor %}
-</ul>
+
 <hr>
 <form action="{% url 'exam:save_exam' %}" method="post">
     {% csrf_token %}

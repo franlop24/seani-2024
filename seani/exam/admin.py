@@ -17,7 +17,7 @@ class StageAdmin(admin.ModelAdmin):
 
 @admin.register(Exam)
 class ExamAdmin(admin.ModelAdmin):
-    list_display = ['user', 'score', 'career', 'stage']
+    list_display = ['user', 'full_name', 'score', 'career', 'stage']
     list_filter = ['career', 'stage']
     inlines = [ExamModuleInline]
 
