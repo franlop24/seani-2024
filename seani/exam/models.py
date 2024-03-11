@@ -109,3 +109,9 @@ class Breakdown(models.Model):
 
     def __str__(self):
         return f"{ self.question } { self.answer }"
+    
+class CustomExam(models.Model):
+    class Meta:
+        verbose_name = 'Agregar Aspirante'
+        verbose_name_plural = 'Agregar Aspirantes'
+        app_label = 'exam'

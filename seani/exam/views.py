@@ -8,7 +8,6 @@ from .models import Exam
 
 from .forms import CandidateForm
 
-@login_required
 def create(request):
     if request.method == 'POST':
         form = CandidateForm(request.POST)
@@ -33,11 +32,8 @@ def create(request):
             exam = Exam.objects.create(user = user, stage = stage, career = career)
             exam.set_modules()
             exam.set_questions()
-            
-            html = """<h1>Aspirante Guardado</h1>
-            <a href="/exam/create/">Registrar otro</a>
-            """
-            return HttpResponse(html)
+            form = CandidateForm()
+            return render(request, 'exam/create.html', {'message': "Aspirante Registrado!", "form": form})
     
     form = CandidateForm()
     return render(request, 'exam/create.html', { "form": form })
