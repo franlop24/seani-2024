@@ -1,0 +1,5 @@
+django
+pymysql
+cloudinary
+python-dotenv
+Pillow

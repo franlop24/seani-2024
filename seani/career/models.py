@@ -8,19 +8,18 @@ class Career(models.Model):
         ('Lic', 'Licenciatura'),
         ('M', 'Maestría'),
     ]
-
+    level = models.CharField(
+            verbose_name='Nivel',
+            max_length=10,
+            choices = LEVELS,    
+        )
     name = models.CharField(
             verbose_name='Nombre',
             max_length=200,    
         )
     short_name = models.CharField(
             verbose_name='Abreviatura',
-            max_length=10,    
-        )
-    level = models.CharField(
-            verbose_name='Nivel',
-            max_length=10,
-            choices = LEVELS,    
+            max_length=20,    
         )
     
     def __str__(self):
