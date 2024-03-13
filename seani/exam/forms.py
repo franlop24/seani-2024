@@ -11,3 +11,7 @@ class CandidateForm(forms.Form):
     password = forms.CharField(max_length=100, widget=forms.PasswordInput)
     stage = forms.ModelChoiceField(queryset=Stage.objects.all())
     career = forms.ModelChoiceField(queryset=Career.objects.all())
+
+class LoadCSVForm(forms.Form):
+    file = forms.FileField()
+    stage = forms.ModelChoiceField(queryset=Stage.objects.all())

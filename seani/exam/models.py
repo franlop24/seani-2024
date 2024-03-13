@@ -118,3 +118,9 @@ class CustomExam(models.Model):
         verbose_name = 'Agregar Aspirante'
         verbose_name_plural = 'Agregar Aspirantes'
         app_label = 'exam'
+
+class LoadCSV(models.Model):
+    class Meta:
+        verbose_name = 'Cargar Aspirante'
+        verbose_name_plural = 'Cargar Aspirantes'
+        app_label = 'exam'

@@ -4,9 +4,10 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 
-from .models import Exam
+from .models import Exam, Stage
+from career.models import Career
 
-from .forms import CandidateForm
+from .forms import CandidateForm, LoadCSVForm
 
 def create(request):
     if request.method == 'POST':
@@ -91,3 +92,45 @@ def save_exam(request):
         exam.compute_score()
         return redirect('exam:home')
     return redirect('exam:home')
+
+def load_csv(request):
+    if request.method == 'POST':
+        form = LoadCSVForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            
+            file_csv = form.cleaned_data['file']
+            stage = form.cleaned_data['stage']
+            data_csv = file_csv.read().decode('utf-8').split('\n')
+
+            data = []
+            for index, line_ in enumerate(data_csv):
+                if index != 0:
+                    line = line_.split(',')
+                    data.append({
+                        "first_name": line[0].strip(), 
+                        "last_name": line[1].strip(),
+                        "email": line[2].strip(),
+                        "password": line[3].strip(),
+                        "career": line[4].strip()
+                        })
+                    
+            for item in data:
+                user = User.objects.create_user(
+                        username = item['email'],
+                        password = item['password'],
+                        email = item['email'])
+                user.first_name = item['first_name']
+                user.last_name = item['last_name']
+                user.save()
+
+                career = Career.objects.get(short_name = item['career'])
+
+                exam = Exam.objects.create(user = user, career = career, stage = stage )
+                exam.set_modules()
+                exam.set_questions()
+            
+            return render(request, 'exam/load_csv.html', {'message': "Carga de datos exitosa!"})
+
+    form = LoadCSVForm()
+    return render(request, 'exam/load_csv.html', {"form": form})
