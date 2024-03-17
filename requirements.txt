@@ -3,3 +3,4 @@ pymysql
 cloudinary
 python-dotenv
 Pillow
+gunicorn

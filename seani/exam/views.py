@@ -41,6 +41,8 @@ def create(request):
 
 @login_required
 def home(request):
+    if request.user.is_superuser:
+        return redirect('admin:index')
     exam = request.user.exam
     modules = exam.exammodule_set.all()
     return render(request, 'exam/home.html', {'modules': modules} )
@@ -49,6 +51,8 @@ def home(request):
 def question(request, module_id, question_id = 1):
     exam = request.user.exam
 
+    if module_id > exam.modules.count() or module_id <= 0 or question_id <= 0:
+        return redirect('exam:home')
     if exam.exammodule_set.get(module_id = module_id).active == False:
         return redirect('exam:home')
     if request.method == 'GET':
