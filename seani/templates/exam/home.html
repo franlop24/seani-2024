@@ -3,24 +3,35 @@
 {% block title %}Home Aspirante{% endblock %}
 
 {% block content %}
-<h1>Seani 2024 - {{ user.exam.full_name }} - {{ user.exam.career }}</h1>
+{% load static %}
+<h1>{{ user.exam.full_name }} - {{ user.exam.career }}</h1>
 <hr>
+<h2 class="welcome">Bienvenido al Sistema de Evaluación para Aspirantes de Nuevo Ingreso SEANI 2024</h2>
+<p>El examen que presentarás a continuación consta de 90 preguntas divididas en 4 módulos.</p>
+<p>El examen está programado para responderse en 120 minutos, sin embargo, estará activo desde las 9:00 hrs hasta las 13:00 hrs por lo que si ingresaste más tarde aún tendrás tiempo de responder</p>
+<p>Las preguntas son de opción múltiple como se muestra en la siguiente imagen</p>
+<img src="{% static 'images/pregunta.png' %}" alt="Ejemplo Pregunta" width="400px">
+<p>Selecciona la opción que consideres la correcta, esta se guardará en cuanto le des click al botón siguiente</p>
+<p>Al darle click sobre el módulo se mostrará la primera pregunta correspondiente</p>
+<p>La navegación entre las preguntas de cada módulo es hacia adelante, al llegar a la última automáticamente te regresará a esta pantalla.</p>
+<p>Si quisieras revisar tus respuestas o responder alguna que te haya faltado hay que ingresar nuevamente al módulo y navegar hacia adelante.</p>
+<p>Al finalizar los 4 módulos dale click al botón Salir.</p>
+<p>Los resultados serán publicados posteriormente en la página de la Universidad.</p>
+<hr>
+<div class="card-container">
 {% for module in modules %}
-<p><a href="{% url 'exam:question' module.module.id %}">{{ module }}</a>
-<br>
-<form action="{% url 'exam:save' module.module.id %}" method="post">{% csrf_token %}<input type="submit" value="Guardar Módulo"></form>
-</p>
+<div class="card">
+    <a href="{% url 'exam:question' module.module.id %}">
+        <h3>{{ module }}</h3>
+    </a>
+    <p>{{ module.module.num_questions }} Preguntas</p>
+</div>
 {% endfor %}
-
-<hr>
-<form action="{% url 'exam:save_exam' %}" method="post">
-    {% csrf_token %}
-    <input type="submit" value="Guardar Examen">
-</form>
+</div>
 <hr>
 <form action="{% url 'logout' %}" method="post">
     {% csrf_token %}
-    <input type="submit" value="Salir">
+    <input type="submit" value="Salir" class="exit">
 </form>
 {% endblock %}
     

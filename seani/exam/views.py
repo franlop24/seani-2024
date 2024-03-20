@@ -51,7 +51,9 @@ def home(request):
 def question(request, module_id, question_id = 1):
     exam = request.user.exam
 
-    if module_id > exam.modules.count() or module_id <= 0 or question_id <= 0:
+    modules = exam.exammodule_set.filter(module_id = module_id)
+
+    if modules.count() == 0 or question_id <= 0:
         return redirect('exam:home')
     if exam.exammodule_set.get(module_id = module_id).active == False:
         return redirect('exam:home')
@@ -69,6 +71,8 @@ def question(request, module_id, question_id = 1):
                 'answer': answer,
                 })
         except IndexError:
+            exam.compute_score_by_module(module_id)
+            exam.compute_score()
             return redirect('exam:home')
         
     if request.method == 'POST':
